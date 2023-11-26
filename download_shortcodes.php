@@ -441,6 +441,24 @@ class download_shortcodes extends e_shortcode
 		//  return  "<a href='".e_PLUGIN_ABS."download/download.php?action=view&id=".$this->var['download_id']."'>".$tp->toHTML($this->var['download_name'],TRUE,'LINKTEXT')."</a>";
 	}
 
+	function sc_download_list_summary($parm = '')
+	{
+ 
+		$maxlen = ($parm ? intval($parm) : 0);
+		$text = ($this->var['download_summary'] ? e107::getParser()->toHTML($this->var['download_summary'], true, 'SUMMARY') : "");
+
+		if ($maxlen)
+		{
+			return substr($text, 0, $maxlen);
+		}
+		else
+		{
+			return $text;
+		}
+
+		return $text;
+	}
+
 	function sc_download_list_author()
 	{
 		return $this->var['download_author'];
@@ -643,13 +661,17 @@ class download_shortcodes extends e_shortcode
 	{
 		$icon = (deftrue('BOOTSTRAP')) ? e107::getParser()->toGlyph('fa-edit') : "<img src='" . e_IMAGE_ABS . "generic/edit.png' alt='*' style='padding:0px;border:0px' />";
 
-		$url = e_PLUGIN_ABS . "download/admin_download.php?action=edit&id=" . $this->var['download_id'];
+		//$url = e_PLUGIN_ABS . "download/admin_download.php?action=edit&id=" . $this->var['download_id'];
 
-		return (ADMIN && getperms('6')) ? "<a class='e-tip btn btn-default btn-secondary hidden-print' href='" . $url . "' title='" . LAN_EDIT . "'>" . $icon . "</a>" : "";
+		$url = e_PLUGIN_ABS . "download/admin_download.php?mode=admin_download&action=edit&id=" . $this->var['download_id'];
+
+		 
+		return (ADMIN && getperms('6')) ? "<a target='_blank' class='e-tip btn btn-default btn-secondary hidden-print' href='" . $url . "' title='" . LAN_EDIT . "'>" . $icon . "</a>" : "";
 	}
 
 	function sc_download_category()
 	{
+ 
 		return $this->var['download_category_name'];
 	}
 
@@ -717,6 +739,25 @@ class download_shortcodes extends e_shortcode
 	function sc_download_view_authorwebsite()
 	{
 		return !empty($this->var['download_author_website']) ? e107::getParser()->toHTML($this->var['download_author_website'], true, 'LINKTEXT') : "";
+	}
+
+
+
+	function sc_download_view_summary($parm = '')
+	{
+		$maxlen = ($parm ? intval($parm) : 0);
+		$text = ($this->var['download_summary'] ? e107::getParser()->toHTML($this->var['download_summary'], true, 'SUMMARY') : "");
+
+		if ($maxlen)
+		{
+			return substr($text, 0, $maxlen);
+		}
+		else
+		{
+			return $text;
+		}
+
+		return $text;
 	}
 
 	function sc_download_view_description($parm = '')
