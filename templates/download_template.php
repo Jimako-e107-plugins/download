@@ -345,7 +345,7 @@ if(!isset($DOWNLOAD_MIRROR_END))
 
 $DOWNLOAD_TEMPLATE['categories']['start'] = "
 	<div class='table-responsive'>
-         <table id='download' class='table table-striped fborder'>
+         <table id='download' class=' categories table table-striped fborder'>
 		      <colgroup>
 		         <col style='width:3%'/>
 		         <col style='width:60%'/>
@@ -528,7 +528,7 @@ $DOWNLOAD_TEMPLATE['view']['nextprev'] = '
 $DOWNLOAD_TEMPLATE['list']['start'] = "
 	<form method='post' action='".e_SELF."?".e_QUERY."'>
 		<div class='table-responsive'>
-            <table id='download' class='table table-striped'>\n
+            <table id='download' class='list table table-striped'>\n
                <colgroup>
                   <col style='width:35%;'/>
                   <col style='width:15%;'/>
@@ -554,6 +554,8 @@ $DOWNLOAD_TEMPLATE['list']['item'] = "
 		         <tr>
 		            <td>
 		               {DOWNLOAD_LIST_NEWICON} {DOWNLOAD_LIST_NAME}
+					   <br>
+					   {DOWNLOAD_LIST_SUMMARY}
 		            </td>
 		            <td>
 		               {DOWNLOAD_LIST_DATESTAMP}
@@ -604,7 +606,7 @@ $sc_style['DOWNLOAD_LIST_NEXTPREV']['post'] = "	</div>";
 			
 $DOWNLOAD_TEMPLATE['mirror']['start'] = "
 	<div class='table-responsive'>
-	   <table id='download' class='table table-striped'>
+	   <table id='download' class='mirror table table-striped'>
 	      <colgroup>
 	         <col style='width:1%'/>
 	         <col style='width:29%'/>

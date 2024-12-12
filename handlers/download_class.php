@@ -29,7 +29,7 @@ class download
 	function __construct()
 	{
 				
-		require_once(e_PLUGIN."download/download_shortcodes.php");
+		//require_once(e_PLUGIN."download/batch/download_shortcodes.php");
 		
 		if(deftrue('BOOTSTRAP')) // v2.x 
 		{
@@ -264,45 +264,16 @@ class download
 		}
 
 
+	 
+		$template = e107::getTemplate('download','download','categories');
 		
-		if(deftrue('BOOTSTRAP')) // v2.x 
-		{
-			$template = e107::getTemplate('download','download','categories');
-			
-			$DOWNLOAD_CAT_TABLE_START 	= varset($template['start']);
-			$DOWNLOAD_CAT_PARENT_TABLE	= $template['parent'];
-			$DOWNLOAD_CAT_CHILD_TABLE	= $template['child'];
-			$DOWNLOAD_CAT_SUBSUB_TABLE	= $template['subchild'];
-			$DOWNLOAD_CAT_TABLE_END		= varset($template['end']);
-				
-//			$DL_VIEW_NEXTPREV			= varset($template['nextprev']);
-//			$DL_VIEW_PAGETITLE			= varset($template['pagetitle']);
-//			$DL_VIEW_CAPTION			= varset($template['caption'],"{DOWNLOAD_VIEW_CAPTION}");
-		}
-		else // Legacy v1.x 
-		{
-			$DOWNLOAD_CAT_TABLE_START 	= null;
-			$DOWNLOAD_CAT_PARENT_TABLE	= null;
-			$DOWNLOAD_CAT_CHILD_TABLE	= null;
-			$DOWNLOAD_CAT_SUBSUB_TABLE	= null;
-			$DOWNLOAD_CAT_TABLE_END		= null;
-
-
-			$template_name = 'download_template.php';
-			
-			if (is_readable(THEME."templates/".$template_name))
-			{
-				require_once(THEME."templates/".$template_name);
-			}
-			elseif (is_readable(THEME.$template_name))
-			{
-				require_once(THEME.$template_name);
-			}
-			else
-			{
-				require_once(e_PLUGIN."download/templates/".$template_name);
-			}	
-		}
+		$DOWNLOAD_CAT_TABLE_START 	= varset($template['start']);
+		$DOWNLOAD_CAT_PARENT_TABLE	= $template['parent'];
+		$DOWNLOAD_CAT_CHILD_TABLE	= $template['child'];
+		$DOWNLOAD_CAT_SUBSUB_TABLE	= $template['subchild'];
+		$DOWNLOAD_CAT_TABLE_END		= varset($template['end']);
+ 
+ 
 
 		/** @var download_shortcodes $sc */
 		$sc = e107::getScBatch('download',true);
@@ -328,7 +299,7 @@ class download
 		{
 			$sc->setVars($dlrow); 
 			$download_cat_table_string .= $tp->parseTemplate($DOWNLOAD_CAT_PARENT_TABLE, TRUE, vartrue($sc));
-			
+	
 			foreach($dlrow['subcats'] as $dlsubrow)
 			{
 				$sc->dlsubrow = $dlsubrow;
@@ -381,12 +352,12 @@ class download
 		$metaImage                      = $tp->thumbUrl($row['download_image'], array('w'=>500), null, true);
 	 	$metaDescription                = $tp->toHTML($row['download_description'],true);
         $metaDescription                = str_replace("\n", ' ', $metaDescription ); // clean-out line-breaks.
-// 		$metaDescription 				= preg_replace('/\v(?:[\v\h]+)/', ' ', $metaDescription); // remove all line-breaks and excess whitespace
+	// 		$metaDescription 				= preg_replace('/\v(?:[\v\h]+)/', ' ', $metaDescription); // remove all line-breaks and excess whitespace
  		$metaDescription 				= $tp->text_truncate($metaDescription, 287); // + '...'
 
 	    e107::meta('description',       $metaDescription);
     //	    e107::meta('description',       $metaDescription);
-		e107::meta('keywords',          $row['download_keywords']);
+		//e107::meta('keywords',          $row['download_keywords']);
 		e107::meta('og:description',    $tp->toText($metaDescription));
 		e107::meta('og:image',          $metaImage);
 		e107::meta('twitter:image:src', $metaImage);
@@ -451,42 +422,7 @@ class download
 	 */
 	private function loadView()
 	{
-		if(deftrue('BOOTSTRAP')) // v2.x
-		{
-			$this->template = e107::getTemplate('download','download','view');
-		}
-		else // Legacy v1.x
-		{
-			$template_name = 'download_template.php';
-
-			$DOWNLOAD_VIEW_TABLE_START = null;
-			$DOWNLOAD_VIEW_TABLE		= null;
-			$DOWNLOAD_VIEW_TABLE_END	= null;
-			$DL_VIEW_NEXTPREV			= null;
-			$DL_VIEW_PAGETITLE			= null;
-			$DL_VIEW_CAPTION			= null;
-
-			if (is_readable(THEME."templates/".$template_name))
-			{
-				require_once(THEME."templates/".$template_name);
-			}
-			elseif (is_readable(THEME.$template_name))
-			{
-				require_once(THEME.$template_name);
-			}
-			else
-			{
-				require_once(e_PLUGIN."download/templates/".$template_name);
-			}
-
-			$this->template['start']      = $DOWNLOAD_VIEW_TABLE_START;
-			$this->template['item']       = $DOWNLOAD_VIEW_TABLE;
-			$this->template['end']        = $DOWNLOAD_VIEW_TABLE_END;
-			$this->template['nextprev']   = $DL_VIEW_NEXTPREV;
-			$this->template['pagetitle']  = $DL_VIEW_PAGETITLE;
-			$this->template['caption']    = varset($DL_VIEW_CAPTION,"{DOWNLOAD_VIEW_CAPTION}");
-
-		}
+		$this->template = e107::getTemplate('download', 'download', 'view');
 
 		if(empty($this->template['newprev']))
 		{
@@ -533,7 +469,7 @@ class download
 			AND d.download_visible IN (".USERCLASS_LIST.")
 			AND dc.download_category_class IN (".USERCLASS_LIST.")
 			LIMIT 1";
-
+ 
 		if(!$sql->gen($query))
 		{
 			return null;
@@ -583,12 +519,11 @@ class download
 
 		$tp = e107::getParser();
 		$ns = e107::getRender();
+
 		/** @var download_shortcodes $sc */
-		$sc = $this->sc;
-
-
+		$sc = $this->sc; 
 		// @see: #3056 fixes fatal error in case $sc is empty (what happens, if no record was found)
-		$count = empty($sc) ? 0 : $sc->getVars();
+		$count = empty($this->rows) ? 0 : $sc->setVars($this->rows);;
 
 		if(empty($count))
 		{
@@ -1275,4 +1210,3 @@ function sort_download_mirror_order($a, $b)
    }
    return ($a[1] < $b[1]) ? -1 : 1;
 }
-

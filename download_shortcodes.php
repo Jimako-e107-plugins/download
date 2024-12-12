@@ -1197,17 +1197,22 @@ class download_shortcodes extends e_shortcode
 
 	function sc_download_back_to_category_list()
 	{
+		
 		if (!empty($this->parent))
 		{
 			$link = e107::url('download', 'category', $this->parent);
+			return "<a class='btn btn-default btn-secondary btn-xs btn-mini' href='" . $link . "'>" . LAN_dl_9 . "</a>";
 		}
 		else
 		{
-			$link = ($this->var['download_category_id']) ? e107::url('download', 'category', $this->var) : null;
+	 
+			$link =  e107::url('download', 'index');
+			return "<a class='btn btn-default btn-secondary btn-xs btn-mini' href='" . $link . "'>" . LAN_dl_49 . "</a>";
 		}
 
-		return "<a class='btn btn-default btn-secondary btn-xs btn-mini' href='" . $link . "'>" . LAN_dl_9 . "</a>";
+		
 	}
+	
 
 
 	// Misc stuff ---------------------------------------------------------------------------------
@@ -1254,7 +1259,7 @@ class download_shortcodes extends e_shortcode
 	 */
 	function _sc_cat_icons($source, $count, $alt)
 	{
-		if (!$source) return "&nbsp;";
+		if (!$source) return '<i class="fas fa-download fa-2x"></i>';
 		//  list($ret[TRUE],$ret[FALSE]) = explode(chr(1), $source.chr(1)); //XXX ???
 		//   if (!$ret[FALSE]) $ret[FALSE] = $ret[TRUE]; //XXX ???
 		$parms = array('legacy' => "{e_IMAGE}icons/");
@@ -1292,4 +1297,3 @@ class download_shortcodes extends e_shortcode
 
 	}
 }
-

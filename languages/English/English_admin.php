@@ -246,3 +246,5 @@ define("LAN_DL_SECURITY_LINK_EXPIRY", "Duration of validity in seconds");
 define("LAN_DL_SECURITY_LINK_EXPIRY_HELP", "Number of seconds the download link should last after being generated. " .
 	"Only effective if the expression supports expiry time. " .
     "Defaults to a very long time if this field is left blank.");
+
+define('LAN_JMD_LATEST_DOWNLOADS_02', "Downloads Overview");

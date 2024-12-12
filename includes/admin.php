@@ -46,7 +46,15 @@ class plugin_download_admin extends e_admin_dispatcher
 			'path' 			=> null,
 			'ui' 			=> 'download_broken_form_ui',
 			'uipath' 		=> null
-		),	
+		),
+
+		'admin_download'	=> array(
+			'controller' 	=> 'download_ui',
+			'path' 			=> 'admin/admin_download.php', 
+			'ui' 			=> 'download_form_ui',
+			'uipath' 		=> 'admin/admin_download.php',
+		),
+
 	);
 
 	/* Both are optional
@@ -62,6 +70,8 @@ class plugin_download_admin extends e_admin_dispatcher
 	protected $adminMenu = array(
 		'main/list'			=> array('caption'=> LAN_MANAGE, 'perm' => 'P'),
 		'main/create' 		=> array('caption'=> LAN_CREATE, 'perm' => 'P'),
+
+		'admin_download/list'	 => array('caption' => LAN_JMD_LATEST_DOWNLOADS_02, 'perm' => 'P'),
 		
 		'other0' 		=> array('divider'=> true),
 		

@@ -27,7 +27,7 @@ download_visible varchar(255) NOT NULL default '0',
 PRIMARY KEY (download_id),
 UNIQUE KEY download_name (download_name),
 KEY download_category (download_category)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 # --------------------------------------------------------
 
 #
@@ -43,7 +43,7 @@ download_category_class varchar(255) NOT NULL default '0',
 download_category_order int(10) unsigned NOT NULL default '0',
 download_category_sef varchar(255) NOT NULL default '',
 PRIMARY KEY (download_category_id)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 # --------------------------------------------------------
 
 #
@@ -58,7 +58,7 @@ mirror_location varchar(100) NOT NULL default '',
 mirror_description text NOT NULL,
 mirror_count int(10) unsigned NOT NULL default '0',
 PRIMARY KEY (mirror_id)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 # --------------------------------------------------------
 
 #
@@ -74,5 +74,5 @@ PRIMARY KEY (download_request_id),
 KEY download_request_userid (download_request_userid),
 KEY download_request_download_id (download_request_download_id),
 KEY download_request_datestamp (download_request_datestamp)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 # --------------------------------------------------------
