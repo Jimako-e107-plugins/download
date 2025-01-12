@@ -119,6 +119,9 @@ class download_setup
 			$old_prefs['agree_text'] = $pref['agree_text'];
 			$coreConfig->remove('agree_text');
 
+			$old_prefs['recent_download_days'] = $pref['recent_download_days'];
+			$coreConfig->remove('recent_download_days');
+
 			$dconf->setPref($old_prefs)->save(false, true);
 			$coreConfig->save(false, true);
 		}
