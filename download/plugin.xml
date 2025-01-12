@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e107Plugin name="Downloads" lan="LAN_PLUGIN_DOWNLOAD_NAME" version="1.4" date="2024-12-11" compatibility="2.3" installRequired="true">
+<e107Plugin name="Downloads" lan="LAN_PLUGIN_DOWNLOAD_NAME" version="1.5" date="2025-01-12" compatibility="2.3" installRequired="true">
 	<author name="e107 Inc." url="https://e107.org" />
 	<description lan="LAN_PLUGIN_DOWNLOAD_DIZ">This plugin is a fully featured file download system</description>
 	<category>content</category>
@@ -9,7 +9,7 @@
 	<siteLinks>
 		<link url="{e_PLUGIN}download/download.php" sef='index' perm="everyone">LAN_PLUGIN_DOWNLOAD_NAME</link>
 	</siteLinks>	
-	<mainPrefs>
+	<pluginPrefs>
 		<pref name="download_php"></pref>
 		<pref name="download_subsub">1</pref>
 		<pref name="download_incinfo"></pref>
@@ -17,10 +17,13 @@
 		<pref name="download_order"></pref>
 		<pref name="download_sort"></pref>
 		<pref name="download_reportbroken">0</pref>
+		<pref name="download_denied"></pref>
+		<pref name="download_reportbroken">254</pref>
 		<pref name="mirror_order"></pref>
 		<pref name="agree_flag"></pref> <!-- needs download prefix? -->
 		<pref name="agree_text"></pref>
-		<pref name="download_denied"></pref>
-		<pref name="download_reportbroken">254</pref>
-	</mainPrefs>
+		<pref name="download_security_mode"></pref>
+		<pref name="download_security_expression"></pref>	
+		<pref name="download_security_link_expiry"></pref>	
+	</pluginPrefs>
 </e107Plugin>

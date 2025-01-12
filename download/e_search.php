@@ -65,8 +65,10 @@ class download_search extends e_search // include plugin-folder in the name.
 
 			// fields and weights.
 			'search_fields'	=> array(
-				'd.download_name'			=> '1.2', 
-				'd.download_url' 			=> '0.9', 
+				'd.download_name'			=> '1.2',
+				'd.download_url'			=> '0.9',
+				'c.download_category_name'  => '0.6',
+				'c.download_category_description'  => '0.6', 
 				'd.download_description'	=> '0.6', 
 				'd.download_author'			=> '0.6', 
 				'd.download_author_website'	=> '0.4'
@@ -140,5 +142,3 @@ class download_search extends e_search // include plugin-folder in the name.
 	
 
 }
-
-

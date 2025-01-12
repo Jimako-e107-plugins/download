@@ -27,8 +27,7 @@ class download_sitelink // include plugin-folder in the name.
 {
 	function config()
 	{
-		global $pref;
-		
+ 
 		$links = array();
 			
 		$links[] = array(

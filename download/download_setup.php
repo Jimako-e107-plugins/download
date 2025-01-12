@@ -45,6 +45,32 @@ class download_setup
 			return true;
 		}
 
+		// Get all preferences
+		$pref = e107::getPref();
+
+		// Use array_keys and preg_grep to check for keys starting with "download_"
+
+		/*		Array
+		(
+			[316] => download_php
+			[317] => download_subsub
+			[318] => download_incinfo
+			[319] => download_view
+			[320] => download_order
+			[321] => download_sort
+			[322] => download_reportbroken
+			[326] => download_denied
+			[342] => download_limits
+		)
+		*/
+ 
+		$keys = array_keys($pref);
+		$matchingKeys = preg_grep('/^download_/', $keys);
+		if (!empty($matchingKeys))
+		{
+			 return true;
+		}		
+
 	}
 
 
@@ -57,6 +83,45 @@ class download_setup
 	 */
 	function upgrade_post($needed)
 	{
+		$pref = e107::getPref();
+
+		// Use array_keys and preg_grep to check for keys starting with "download_"
+		$keys = array_keys($pref);
+		$matchingKeys = preg_grep('/^download_/', $keys);
+
+		if (!empty($matchingKeys))
+		{ 
+ 
+			/* This will move the main download preferences into its own table row. */
+			$dconf = e107::getPlugConfig('download', '', false);
+			$coreConfig = e107::getConfig();
+			$old_prefs = array();
+	 
+			foreach ($pref as $k => $v)
+			{
+
+				if (substr($k, 0, 9) == 'download_')
+				{
+
+					//$nk = substr($k, 9);
+					$nk = $k;
+					$old_prefs[$nk] = $v;
+					$coreConfig->remove($k);
+				}
+			}
+
+			$old_prefs['mirror_order'] = $pref['mirror_order'];
+			$coreConfig->remove('mirror_order');
+
+			$old_prefs['agree_flag'] = $pref['agree_flag'];
+			$coreConfig->remove('agree_flag');
+
+			$old_prefs['agree_text'] = $pref['agree_text'];
+			$coreConfig->remove('agree_text');
+
+			$dconf->setPref($old_prefs)->save(false, true);
+			$coreConfig->save(false, true);
+		}
 		/*
 		 * Currently Installed version (prior to upgrade): $needed->current_plug['plugin_version'];
 		 * Add "IF" statements as needed, and other upgrade_x_y() methods as required. 

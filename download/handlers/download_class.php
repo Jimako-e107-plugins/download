@@ -42,9 +42,9 @@ class download
 			$this->templateFooter = '';
 		}
 
-		$pref = e107::getPref();
+		$pluginPref = e107::getPref();
 
-	//	$catObj = new downloadCategory(varset($pref['download_subsub'],1),USERCLASS_LIST,null, varset($pref['download_incinfo'], false));
+	//	$catObj = new downloadCategory(varset($pluginPref['download_subsub'],1),USERCLASS_LIST,null, varset($pluginPref['download_incinfo'], false));
 	//	$this->categories = $catObj->cat_tree;
 		$this->loadCategories();
 
@@ -95,17 +95,17 @@ class download
 	{
 
 		$tp = e107::getParser();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 	
 		$tmp = explode('.', e_QUERY);
 		
-		$order = str_replace("download_","", varset($pref['download_order'], 'id'));
+		$order = str_replace("download_","", varset($pluginPref['download_order'], 'id'));
 						
 		// Set Defaults
 		$this->qry['action']		= 'maincats';
 		$this->qry['order'] 		= vartrue($order, 'datestamp');
-		$this->qry['sort']			= vartrue($pref['download_sort'], 'desc');
-		$this->qry['view'] 			= vartrue($pref['download_view'], 10);
+		$this->qry['sort']			= vartrue($pluginPref['download_sort'], 'desc');
+		$this->qry['view'] 			= vartrue($pluginPref['download_view'], 10);
 		$this->qry['from']			= 0;
 			
 		// v2.x 
@@ -162,7 +162,7 @@ class download
 	public function load()
 	{
 
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 
 		switch($this->qry['action'])
 		{
@@ -183,7 +183,7 @@ class download
 
 			case "report":
 
-				if(check_class($pref['download_reportbroken']))
+				if(check_class($pluginPref['download_reportbroken']))
 				{
 					e107::route('download/report');
 					$this->loadReport();
@@ -207,7 +207,7 @@ class download
 	public function render()
 	{
 		
-		$pref = e107::getPref();
+		$pluginPref = e107::getPref();
 		
 		if($this->qry['action'] == 'maincats')
 		{
@@ -224,7 +224,7 @@ class download
 			return $this->renderView();
 		}
 		
-		if ($this->qry['action'] == "report" && check_class($pref['download_reportbroken']))
+		if ($this->qry['action'] == "report" && check_class($pluginPref['download_reportbroken']))
 		{
 			return $this->renderReport();		
 		}
@@ -254,7 +254,7 @@ class download
 	{
 		$tp = e107::getParser();
 		$ns = e107::getRender();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 		
 
 	//	if ($cacheData = $e107cache->retrieve("download_cat".$maincatval,720)) // expires every 12 hours. //TODO make this an option
@@ -284,7 +284,7 @@ class download
 		if(!defined("DL_IMAGESTYLE")){ define("DL_IMAGESTYLE","border:1px solid blue");}
 
 	   // Read in tree of categories which this user is allowed to see
-		$dlcat = new downloadCategory(varset($pref['download_subsub'],1),USERCLASS_LIST, null ,varset($pref['download_incinfo'],FALSE));
+		$dlcat = new downloadCategory(varset($pluginPref['download_subsub'],1),USERCLASS_LIST, null ,varset($pluginPref['download_incinfo'],FALSE));
 
 		if ($dlcat->down_count == 0)
 	   	{
@@ -579,45 +579,26 @@ class download
 	private function renderList()
 	{
 		
-		if(deftrue('BOOTSTRAP')) // v2.x 
-		{
-			$template = e107::getTemplate('download','download');
-			
-			$DOWNLOAD_LIST_CAPTION 		= $template['list']['caption'];	
-			$DOWNLOAD_LIST_TABLE_START 	= $template['list']['start'];	
-			$DOWNLOAD_LIST_TABLE 		= $template['list']['item'];
-			$DOWNLOAD_LIST_TABLE_END 	= $template['list']['end'];		
-			$DOWNLOAD_LIST_NEXTPREV		= $template['list']['nextprev'];
-			
-			$DOWNLOAD_CAT_TABLE_START 	= varset($template['categories']['start']);
-		//	$DOWNLOAD_CAT_PARENT_TABLE	= $template['categories']['parent'];
-		//	$DOWNLOAD_CAT_CHILD_TABLE	= $template['categories']['child'];
-			$DOWNLOAD_CAT_SUBSUB_TABLE	= $template['categories']['subchild'];
-			$DOWNLOAD_CAT_TABLE_END		= varset($template['categories']['end']);
-		}
-		else // Legacy v1.x 
-		{
-			$template_name = 'download_template.php';	
-			
-			if (is_readable(THEME."templates/".$template_name))
-			{
-				require_once(THEME."templates/".$template_name);
-			}
-			elseif (is_readable(THEME.$template_name))
-			{
-				require_once(THEME.$template_name);
-			}
-			else
-			{
-				require_once(e_PLUGIN."download/templates/".$template_name);
-			}	
-		}
+ 
+		$template = e107::getTemplate('download','download');
 		
+		$DOWNLOAD_LIST_CAPTION 		= $template['list']['caption'];	
+		$DOWNLOAD_LIST_TABLE_START 	= $template['list']['start'];	
+		$DOWNLOAD_LIST_TABLE 		= $template['list']['item'];
+		$DOWNLOAD_LIST_TABLE_END 	= $template['list']['end'];		
+		$DOWNLOAD_LIST_NEXTPREV		= $template['list']['nextprev'];
+		
+		$DOWNLOAD_CAT_TABLE_START 	= varset($template['subcategories']['start']);
+	//	$DOWNLOAD_CAT_PARENT_TABLE	= $template['categories']['parent'];
+	//	$DOWNLOAD_CAT_CHILD_TABLE	= $template['categories']['child'];
+		$DOWNLOAD_CAT_SUBSUB_TABLE	= $template['categories']['subchild'];
+		$DOWNLOAD_CAT_TABLE_END		= varset($template['subcategories']['end']);
+ 
 		
 		$sql = e107::getDb('dlrow');
 		$tp = e107::getParser();
 		$ns = e107::getRender();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 		
 
 		/** @var download_shortcodes $sc */
@@ -779,7 +760,7 @@ class download
 		{
 				$sc->setVars($dlrow);
 
-				$agreetext = $tp->toHTML($pref['agree_text'], TRUE, 'DESCRIPTION');
+				$agreetext = $tp->toHTML($pluginPref['agree_text'], TRUE, 'DESCRIPTION');
 				$current_row = ($current_row) ? 0: 1;
 				// Alternating CSS for each row.(backwards compatible)
 				$template = ($current_row == 1)? $DOWNLOAD_LIST_TABLE: str_replace("forumheader3", "forumheader3 forumheader3_alt", $DOWNLOAD_LIST_TABLE);
@@ -848,13 +829,13 @@ class download
 		$tp 	= e107::getParser();
 		$ns 	= e107::getRender();
 		$frm 	= e107::getForm();
-		$pref 	= e107::getPref();
+		$pluginPref = e107::pref('download');
 		$mes 	= e107::getMessage();
 						
 		$dlrow = $this->rows;
 	
 		// Check if user is allowed to make reports, and if user is allowed to view the actual download item
-		if(!check_class($dlrow['download_class']) || !check_class($pref['download_reportbroken']))
+		if(!check_class($dlrow['download_class']) || !check_class($pluginPref['download_reportbroken']))
 		{	
 			$mes->addError(LAN_dl_79);
 			return $ns->tablerender(LAN_PLUGIN_DOWNLOAD_NAME, $mes->render(), 'download-report', true);
@@ -880,7 +861,7 @@ class download
 		
 			// Replaced by e_notify 
 			/*
-			if ($pref['download_email']) 
+			if ($pluginPref['download_email']) 
 			{    // this needs to be moved into the NOTIFY, with an event.
 				require_once(e_HANDLER."mail.php");
 				$subject = LAN_dl_60." ".SITENAME;
@@ -943,7 +924,7 @@ class download
 		$sql = e107::getDb();
 		$tp = e107::getParser();
 		$ns = e107::getRender();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 		
 		if(deftrue('BOOTSTRAP')) // v2.x 
 		{
@@ -1003,16 +984,16 @@ class download
 			
 			$array = explode(chr(1), $dlrow['download_mirror']);
 			
-			if (2 == varset($pref['mirror_order']))
+			if (2 == varset($pluginPref['mirror_order']))
 			{
 	         // Order by name, sort array manually
 				usort($array, "sort_download_mirror_order");
 			}
-	      //elseif (1 == varset($pref['mirror_order']))
+	      //elseif (1 == varset($pluginPref['mirror_order']))
 	      //{
 	      //   // Order by ID  - do nothing order is as stored in DB
 	      //}
-			elseif (0 == varset($pref['mirror_order'], 0))
+			elseif (0 == varset($pluginPref['mirror_order'], 0))
 			{
 				   // Shuffle the mirror list into a random order
 				   $c = count($array);
@@ -1065,7 +1046,7 @@ class download
 	private function renderError()
 	{
 		$ns = e107::getRender();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 		$tp = e107::getParser();
 		
 		$sc = e107::getScBatch('download',true);
@@ -1076,9 +1057,9 @@ class download
 		switch ($this->qry['error'])
 		{
 			case 1 :	// No permissions
-	            if (strlen($pref['download_denied']) > 0) 
+	            if (strlen($pluginPref['download_denied']) > 0) 
 	            {
-					$errmsg = $tp->toHTML($pref['download_denied'],true, 'DESCRIPTION');
+					$errmsg = $tp->toHTML($pluginPref['download_denied'],true, 'DESCRIPTION');
 	   	      	} 
 	   	      	else 
 	   	      	{

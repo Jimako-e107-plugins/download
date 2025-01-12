@@ -25,8 +25,13 @@ download_mirror text NOT NULL,
 download_mirror_type tinyint(1) unsigned NOT NULL default '0',
 download_visible varchar(255) NOT NULL default '0',
 PRIMARY KEY (download_id),
-UNIQUE KEY download_name (download_name),
-KEY download_category (download_category)
+UNIQUE KEY download_sef (download_sef),
+KEY download_category (download_category),
+FULLTEXT KEY download_name (download_name),
+FULLTEXT KEY download_url (download_url),
+FULLTEXT KEY download_description (download_description),
+FULLTEXT KEY download_author (download_author),
+FULLTEXT KEY download_author_website (download_author_website)
 ) ENGINE=InnoDB;
 # --------------------------------------------------------
 
@@ -37,12 +42,14 @@ CREATE TABLE download_category (
 download_category_id int(10) unsigned NOT NULL auto_increment,
 download_category_name varchar(100) NOT NULL default '',
 download_category_description text NOT NULL,
-download_category_icon varchar(100) NOT NULL default '',
+download_category_icon varchar(255) NOT NULL, 
 download_category_parent int(10) unsigned NOT NULL default '0',
 download_category_class varchar(255) NOT NULL default '0',
 download_category_order int(10) unsigned NOT NULL default '0',
 download_category_sef varchar(255) NOT NULL default '',
-PRIMARY KEY (download_category_id)
+PRIMARY KEY (download_category_id),
+FULLTEXT KEY download_category_name (download_category_name),
+FULLTEXT KEY download_category_description (download_category_description),
 ) ENGINE=InnoDB;
 # --------------------------------------------------------
 

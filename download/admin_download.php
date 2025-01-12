@@ -48,7 +48,7 @@ require_once(e_HANDLER."userclass_class.php");
 require_once(e_HANDLER."file_class.php");
 
 $fl = new e_file;
-$pref = e107::getPref(); // legacy, remove all globals
+$pluginPref = e107::pref('download');
 $download = new download();
 // $adminDownload = new adminDownload();
 
@@ -76,7 +76,7 @@ $emessage = &eMessage::getInstance();
 
 
 $from = ($from ? $from : 0);
-$amount = varset($pref['download_view'], 50);
+$amount = varset($pluginPref['download_view'], 50);
 
 if (isset($_POST))
 {
@@ -115,7 +115,7 @@ if (isset($_POST['updatedownlaodoptions']))
 	$temp['download_view'] = $_POST['download_view'];
 	$temp['download_sort'] = $_POST['download_sort'];
 	$temp['download_order'] = $_POST['download_order'];
-	$temp['mirror_order'] = $_POST['mirror_order'];
+ 
 	$temp['recent_download_days'] = $_POST['recent_download_days'];
 	$temp['agree_flag'] = $_POST['agree_flag'];
 	$temp['download_email'] = $_POST['download_email'];
@@ -124,7 +124,7 @@ if (isset($_POST['updatedownlaodoptions']))
 	$temp['download_reportbroken'] = $_POST['download_reportbroken'];
 	if ($_POST['download_subsub']) $temp['download_subsub'] = '1'; else $temp['download_subsub'] = '0';
 	if ($_POST['download_incinfo']) $temp['download_incinfo'] = '1'; else $temp['download_incinfo'] = '0';
-	if ($admin_log->logArrayDiffs($temp, $pref, 'DOWNL_01'))
+	if ($admin_log->logArrayDiffs($temp, $pluginPref, 'DOWNL_01'))
 	{
 		save_prefs();
 
@@ -152,7 +152,7 @@ if (isset($_POST['updateuploadoptions']))
 	$cfg->set('upload_class', (int) $_POST['upload_class']);
 	$cfg->save(true, true, true);
 
-	/*if ($admin_log->logArrayDiffs($temp, $pref, 'DOWNL_02'))
+	/*if ($admin_log->logArrayDiffs($temp, $pluginPref, 'DOWNL_02'))
 	{
 		save_prefs();
 		$message = DOWLAN_65;
@@ -197,12 +197,12 @@ if (!empty($_POST['addlimit']))
 if (isset($_POST['updatelimits']))
 {
 	
-	//if ($pref['download_limits'] != $_POST['download_limits'])
+	//if ($pluginPref['download_limits'] != $_POST['download_limits'])
 	{
 		$tmp = ($_POST['download_limits'] == 'on') ? 1 : 0;
-		if ($pref['download_limits'] != $tmp)
+		if ($pluginPref['download_limits'] != $tmp)
 		{
-			$pref['download_limits'] = $tmp;
+			$pluginPref['download_limits'] = $tmp;
 			e107::getConfig()->set('download_limits', $tmp)->save(false);
 			$message .= DOWLAN_126."<br/>";
 		}
@@ -246,6 +246,3 @@ require_once(e_ADMIN."auth.php");
 //download/includes/admin.php is auto-loaded. 
  e107::getAdminUI()->runPage();
 require_once(e_ADMIN."footer.php");
-
-
-

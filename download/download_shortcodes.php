@@ -42,7 +42,7 @@ class download_shortcodes extends e_shortcode
 	public function __construct()
 	{
 		parent::__construct();
-		$this->pref = e107::getPref();
+		$this->pref = e107::pref('download');
 	}
 
 	/**
@@ -118,8 +118,7 @@ class download_shortcodes extends e_shortcode
 				$breadcrumb[] = array('text' => varset($this->var['download_name']), 'url' => null);
 				break;
 		}
-
-
+ 
 		e107::breadcrumb($breadcrumb);
 
 	}
@@ -137,15 +136,16 @@ class download_shortcodes extends e_shortcode
 
 
 	// Category ************************************************************************************
-	public function sc_download_cat_main_name()
+	public function sc_download_cat_main_name($parm = NULL)
 	{
+		$class = (!empty($parm['class'])) ? " class ='".$parm['class']."'" : "";
 		$tp = e107::getParser();
-
+	 
 		if (!empty($this->var['d_count']))
 		{
 			$url = e107::url('download', 'category', $this->var);
 
-			return "<a href='" . $url . "'>" . $tp->toHTML($this->var['download_category_name'], false, 'TITLE') . "</a>";
+			return "<a  ". $class." href='" . $url . "'>" . $tp->toHTML($this->var['download_category_name'], false, 'TITLE') . "</a>";
 		}
 
 		return $tp->toHTML($this->var['download_category_name'], false, 'TITLE');
@@ -158,11 +158,17 @@ class download_shortcodes extends e_shortcode
 		return $tp->toHTML($this->var['download_category_description'], true, 'DESCRIPTION');
 	}
 
-	public function sc_download_cat_main_icon()
+	public function sc_download_cat_main_icon($parm = null)
 	{
+ 
+		if (!is_array($parm)) $parm = [];
+		if(!isset($parm['type'])) $parm['type'] = "icon";
+	 
 		// Pass count as 1 to force non-empty icon
-		return $this->_sc_cat_icons($this->var['download_category_icon'], 1, $this->var['download_category_name']);
+		return $this->_sc_cat_icons($this->var['download_category_icon'], 1, $this->var['download_category_name'], $parm );
 	}
+
+ 
 
 	public function sc_download_cat_main_count()
 	{
@@ -1257,15 +1263,48 @@ class download_shortcodes extends e_shortcode
 	/**
 	 * @private
 	 */
-	function _sc_cat_icons($source, $count, $alt)
+	function _sc_cat_icons($source, $count, $alt, $parm = NULL)
 	{
+	
+		if (!is_array($parm)) $parm = [];
+		if (!isset($parm['type'])) $parm['type'] = "icon";
+ 
 		if (!$source) return '<i class="fas fa-download fa-2x"></i>';
-		//  list($ret[TRUE],$ret[FALSE]) = explode(chr(1), $source.chr(1)); //XXX ???
-		//   if (!$ret[FALSE]) $ret[FALSE] = $ret[TRUE]; //XXX ???
-		$parms = array('legacy' => "{e_IMAGE}icons/");
+ 
+		if ($source[0] == '{')
+		{
+			$src =  e107::getParser()->replaceConstants($source, 'abs');
+		}
+		else $src = $source;
+		 
+		$class = !empty($parm['class']) ? $parm['class'] : "";
+ 
+		switch ($parm['type'])
+		{
+				/* @deprecated - Will cause issues with glyphs */
+			case 'src':
+				return $src;
 
-		return e107::getParser()->toIcon($source, $parms);
-		//return "<img src='".e_IMAGE."icons/{$ret[($count!=0)]}' alt='*'/>";
+			case 'icon':
+			case 'tag':
+				$parms = array('legacy' => "{e_IMAGE}icons/");
+				$tag = e107::getParser()->toIcon($source, $parms);
+				return $tag;
+
+			case 'img':
+	 
+				$imgParms = $parm;
+				$imgParms = array(
+					'class'         => $class,
+					'alt'         => $alt,
+				);
+				$imgParms = array_replace($parm, $imgParms);
+
+				$img = e107::getParser()->toImage($source, $imgParms);
+
+				return $img; 
+		}
+
 	}
 
 

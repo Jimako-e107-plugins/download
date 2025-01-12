@@ -278,11 +278,13 @@ class download_cat_form_ui extends e_admin_form_ui
 		switch($mode)
 		{
 			case 'read':
-				return e107::getParser()->toIcon($curVal, array('legacy'=>'{e_IMAGE}icons/'));
+				return e107::getParser()->toImage($curVal, array('legacy'=>'{e_IMAGE}icons/'));
 			break;
 
 			case 'write':
-				return $this->iconpicker('download_category_icon', $curVal,null,array('glyphs'=>true, 'legacyPath'=>'{e_IMAGE}icons/'));
+				$text = $this->imagepicker('download_category_icon', $curVal,null,array('glyphs'=>true, 'legacyPath'=>'{e_IMAGE}icons/'));
+				$text .= "<hr>". $this->text('download_category_icon', $curVal, null, array('size' => 'xxlarge' ));
+				return $text;
 			break;
 
 			case 'filter':
@@ -659,10 +661,8 @@ $columnInfo = array(
 			$sql = e107::getDb();
 			$ns = e107::getRender();
 			$tp = e107::getParser();
-			$pref = e107::getPref();
-			
-			//global $pref;
-			
+			$pluginPref = e107::pref('download');
+ 
 			if ($sql->select('userclass_classes','userclass_id, userclass_name'))
 			{
 				$classList = $sql->db_getList();
@@ -680,7 +680,7 @@ $columnInfo = array(
 				<tr>
 					<td colspan='4' style='text-align:left'>
 				";
-				if(vartrue($pref['download_limits']) == 1)
+				if(vartrue($pluginPref['download_limits']) == 1)
 				{
 					$chk = " checked = 'checked'";
 				}
@@ -763,8 +763,9 @@ $columnInfo = array(
 		{
 			$mes = e107::getMessage();
 			$mes->addInfo("Deprecated Area - please use filter instead under 'Manage' ");
-			
-			global $pref;
+
+			$pluginPref = e107::pref('download');
+
 			$ns = e107::getRender();
 			$sql = e107::getDb();
 			$sql2 = e107::getDb('sql2');
@@ -1173,9 +1174,10 @@ $columnInfo = array(
 		
 		function saveSettings()
 		{
-			global $admin_log,$pref;
+			global $admin_log;
 					
 			$tp = e107::getParser();
+			$pluginPref = e107::pref('download');
 
 			$expected_params = array(
 				'download_php', 'download_view', 'download_sort', 'download_order',
@@ -2158,24 +2160,25 @@ $columnInfo = array(
 		return $supported_secure_link_variables_html;
 	}
 
-	private function mirror_order_options_html($pref)
+	private function mirror_order_options_html($pluginPref)
 	{
-		return ($pref['mirror_order'] == "0" ? "<option value='0' selected='selected'>".DOWLAN_161."</option>" : "<option value='0'>".DOWLAN_161."</option>").
-			($pref['mirror_order'] == "1" ? "<option value='1' selected='selected'>".LAN_ID."</option>" : "<option value='1'>".LAN_ID."</option>").
-			($pref['mirror_order'] == "2" ? "<option value='2' selected='selected'>".DOWLAN_12."</option>" : "<option value='2'>".DOWLAN_12."</option>");
+		return ($pluginPref['mirror_order'] == "0" ? "<option value='0' selected='selected'>".DOWLAN_161."</option>" : "<option value='0'>".DOWLAN_161."</option>").
+			($pluginPref['mirror_order'] == "1" ? "<option value='1' selected='selected'>".LAN_ID."</option>" : "<option value='1'>".LAN_ID."</option>").
+			($pluginPref['mirror_order'] == "2" ? "<option value='2' selected='selected'>".DOWLAN_12."</option>" : "<option value='2'>".DOWLAN_12."</option>");
 	}
 
 		function show_download_options()
 		{
-		   	global $pref, $ns;
+		   	global $ns;
 
+			$pluginPref = e107::pref("download");
 			require_once(e_HANDLER."form_handler.php");
 			$frm = new e_form(true); //enable inner tabindex counter
 
-			$agree_flag = $pref['agree_flag'];
-		   	$agree_text = $pref['agree_text'];
-		      $c = $pref['download_php'] ? " checked = 'checked' " : "";
-		      $sacc = (varset($pref['download_incinfo'],0) == '1') ? " checked = 'checked' " : "";
+			$agree_flag = $pluginPref['agree_flag'];
+		   	$agree_text = $pluginPref['agree_text'];
+		      $c = $pluginPref['download_php'] ? " checked = 'checked' " : "";
+		      $sacc = (varset($pluginPref['download_incinfo'],0) == '1') ? " checked = 'checked' " : "";
 		      $order_options = array(
 		         "download_id"        => "Id No.",
 		         "download_datestamp" => LAN_DATE,
@@ -2210,46 +2213,46 @@ $columnInfo = array(
 		            		      <tr>
 		            		         <td>".LAN_DL_USE_PHP."</td>
 		            		         <td>"
-		            		            .$frm->checkbox('download_php', '1', $pref['download_php'])
+		            		            .$frm->checkbox('download_php', '1', $pluginPref['download_php'])
 		            		            .$frm->label(LAN_DL_USE_PHP_INFO, 'download_php', '1')
 		            		         ."</td>
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".LAN_DL_SUBSUB_CAT."</td>
 		            		         <td>"
-		            		            .$frm->checkbox('download_subsub', '1', $pref['download_subsub'])
+		            		            .$frm->checkbox('download_subsub', '1', $pluginPref['download_subsub'])
 		            		            .$frm->label(LAN_DL_SUBSUB_CAT_INFO, 'download_subsub', '1')
 		            		         ."</td>
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".LAN_DL_SUBSUB_COUNT."</td>
 		            		         <td>"
-		            		            .$frm->checkbox('download_incinfo', '1', $pref['download_incinfo'])
+		            		            .$frm->checkbox('download_incinfo', '1', $pluginPref['download_incinfo'])
 		            		            .$frm->label(LAN_DL_SUBSUB_COUNT_INFO, 'download_incinfo', '1')
 		            		         ."</td>
 		            		      </tr>
 		            		      <tr>
 		               		      <td>".DOWLAN_55."</td>
-		            		         <td>".$frm->text('download_view', $pref['download_view'], '4', array('size'=>'4'))."</td>
+		            		         <td>".$frm->text('download_view', $pluginPref['download_view'], '4', array('size'=>'4'))."</td>
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".DOWLAN_56."</td>
-		            		         <td>".$frm->select('download_order', $order_options, $pref['download_order'])."</td>
+		            		         <td>".$frm->select('download_order', $order_options, $pluginPref['download_order'])."</td>
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".LAN_ORDER."</td>
-		             		         <td>".$frm->select('download_sort', $sort_options, $pref['download_sort'])."</td>
+		             		         <td>".$frm->select('download_sort', $sort_options, $pluginPref['download_sort'])."</td>
 		            		      </tr>
 		            		      <tr>
 		               		      <td>".DOWLAN_160."</td>
 		               		      <td>
-		                  		      <select name='mirror_order' class='form-control'>".$this->mirror_order_options_html($pref)."
+		                  		      <select name='mirror_order' class='form-control'>".$this->mirror_order_options_html($pluginPref)."
 		            		            </select>
 		               		      </td>
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".DOWLAN_164."</td>
-		            		         <td><input type='text' name='recent_download_days' class='form-control' value='".$pref['recent_download_days']."' size='3' maxlength='3'/>
+		            		         <td><input type='text' name='recent_download_days' class='form-control' value='". $pluginPref['recent_download_days']."' size='3' maxlength='3'/>
 		            		         </td>
 		            		      </tr>
 		            		   </table>
@@ -2264,14 +2267,14 @@ $columnInfo = array(
 		            		      </colgroup>
 		            		      <tr>
 		               		      <td>".DOWLAN_151."</td>
-		               		      <td>". r_userclass("download_reportbroken", $pref['download_reportbroken'])."</td>
+		               		      <td>". r_userclass("download_reportbroken", $pluginPref['download_reportbroken'])."</td>
 		            		      </tr>";
 
 		            		      //moved to e_notify
 		            		      /* 
 		            		      <tr>
 		               		      <td>".DOWLAN_150."</td>
-		               		      <td>". ($pref['download_email'] ? "<input type='checkbox' name='download_email' value='1' checked='checked'/>" : "<input type='checkbox' name='download_email' value='1'/>")."</td>
+		               		      <td>". ($pluginPref['download_email'] ? "<input type='checkbox' name='download_email' value='1' checked='checked'/>" : "<input type='checkbox' name='download_email' value='1'/>")."</td>
 		            		      </tr>*/
 		    $text .= " 
 		            		   </table>
@@ -2294,7 +2297,7 @@ $columnInfo = array(
 		            		      </tr>
 		            		      <tr>
 		            		         <td>".DOWLAN_146."</td>
-		            		         <td>".$frm->bbarea('download_denied',$pref['download_denied'])."</td>
+		            		         <td>".$frm->bbarea('download_denied', $pluginPref['download_denied'])."</td>
 		            		      </tr>
 		            		   </table>
 		            		</div>
@@ -2311,13 +2314,13 @@ $columnInfo = array(
 		            		      </colgroup>
 		            		      <tr>
 		            		         <td>".LAN_DL_SECURITY_MODE."</td>
-		            		         <td>".$frm->select('download_security_mode', $this->security_options, $pref['download_security_mode'])."</td>
+		            		         <td>".$frm->select('download_security_mode', $this->security_options, $pluginPref['download_security_mode'])."</td>
 		            		      </tr>
-		            		      <tbody id='nginx-secure_link_md5' ".($pref['download_security_mode'] === 'nginx-secure_link_md5' ? "" : "style='display:none'").">
+		            		      <tbody id='nginx-secure_link_md5' ".($pluginPref['download_security_mode'] === 'nginx-secure_link_md5' ? "" : "style='display:none'").">
 		            		      	<tr>
 		            		     	 	<td>".LAN_DL_SECURITY_NGINX_SECURELINKMD5_EXPRESSION."</td>
 		            		     	 	<td>
-		            		     	 		".$frm->text('download_security_expression', $pref['download_security_expression'], 1024)."
+		            		     	 		".$frm->text('download_security_expression', $pluginPref['download_security_expression'], 1024)."
 		            		     	 		<div class='field-help'>".LAN_DL_SECURITY_NGINX_SECURELINKMD5_EXPRESSION_HELP."</div>
 		            		     	 		<small><a href='#' onclick='event.preventDefault();$(\"#supported-nginx-variables\").toggle();this.blur()'>
 		            		     	 			".LAN_DL_SECURITY_NGINX_SUPPORTED_VARIABLES_TOGGLE."
@@ -2330,7 +2333,7 @@ $columnInfo = array(
 		            		      	<tr>
 		            		      		<td>".LAN_DL_SECURITY_LINK_EXPIRY."</td>
 		            		      		<td>
-		            		     	 		".$frm->text('download_security_link_expiry', $pref['download_security_link_expiry'], 16, array('pattern' => '\d+'))."
+		            		     	 		".$frm->text('download_security_link_expiry', $pluginPref['download_security_link_expiry'], 16, array('pattern' => '\d+'))."
 		            		      			<div class='field-help'>".LAN_DL_SECURITY_LINK_EXPIRY_HELP."</div>
 		            		      		</td>
 		            		      	</tr>

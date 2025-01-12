@@ -17,7 +17,7 @@ class download_request
 
 		$sql = e107::getDb();
 		$tp = e107::getParser();
-		$pref = e107::pref();
+		$pluginPref = e107::pref('download');
         //id=4
 		if(!is_numeric(e_QUERY) && empty($_GET['id']))
 		{
@@ -52,7 +52,7 @@ class download_request
 				extract($row);
 				if(check_class($row['download_category_class']) && check_class($row['download_class']))
 				{
-					if(!empty($pref['download_limits']) && $row['download_active'] == 1)
+					if(!empty($pluginPref['download_limits']) && $row['download_active'] == 1)
 					{
 						self::check_download_limits();
 					}
@@ -166,7 +166,7 @@ class download_request
 						exit();
 					}
 
-					if($pref['download_limits'] && $row['download_active'] == 1)
+					if($pluginPref['download_limits'] && $row['download_active'] == 1)
 					{
 						self::check_download_limits();
 					}
@@ -261,11 +261,11 @@ class download_request
 				}
 				else
 				{    // Download Access Denied.
-					if((!strpos($pref['download_denied'], ".php") &&
-						!strpos($pref['download_denied'], ".htm") &&
-						!strpos($pref['download_denied'], ".html") &&
-						!strpos($pref['download_denied'], ".shtml") ||
-						(strpos($pref['download_denied'], "signup.php") && USER == true)
+					if((!strpos($pluginPref['download_denied'], ".php") &&
+						!strpos($pluginPref['download_denied'], ".htm") &&
+						!strpos($pluginPref['download_denied'], ".html") &&
+						!strpos($pluginPref['download_denied'], ".shtml") ||
+						(strpos($pluginPref['download_denied'], "signup.php") && USER == true)
 					))
 					{
 						//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=1";
@@ -275,7 +275,7 @@ class download_request
 					}
 					else
 					{
-						e107::redirect(trim($pref['download_denied']));
+						e107::redirect(trim($pluginPref['download_denied']));
 						return;
 					}
 				}
@@ -387,7 +387,7 @@ class download_request
 	{
 		global $HEADER;
 		$sql = e107::getDb();
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 
 		// Check download count limits
 		$qry = "SELECT gen_intdata, gen_chardata, (gen_intdata/gen_chardata) as count_perday FROM #generic WHERE gen_type = 'download_limit' AND gen_datestamp IN (".USERCLASS_LIST.") AND (gen_chardata >= 0 AND gen_intdata >= 0) ORDER BY count_perday DESC";
@@ -459,15 +459,15 @@ class download_request
 
 	private static function decorate_download_location($url)
 	{
-		$pref = e107::getPref();
+		$pluginPref = e107::pref('download');
 
-		if (varset($pref['download_security_mode']) !== 'nginx-secure_link_md5')
+		if (varset($pluginPref['download_security_mode']) !== 'nginx-secure_link_md5')
 		{
 			return $url;
 		}
 
 		require_once(__DIR__."/handlers/NginxSecureLinkMd5Decorator.php");
-		$decorator = new NginxSecureLinkMd5Decorator($url, $pref);
+		$decorator = new NginxSecureLinkMd5Decorator($url, $pluginPref);
 		return $decorator->decorate();
 	}
 
