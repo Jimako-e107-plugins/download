@@ -278,11 +278,9 @@ class download
 		/** @var download_shortcodes $sc */
 		$sc = e107::getScBatch('download',true);
 		$sc->wrapper('download/categories');
+		$sc->qry 	= $this->qry;
 		$sc->breadcrumb();
-		$sc->qry 	= $this->qry;	
-		
-	
-		
+ 
 		if(!defined("DL_IMAGESTYLE")){ define("DL_IMAGESTYLE","border:1px solid blue");}
 
 	   // Read in tree of categories which this user is allowed to see
