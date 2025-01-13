@@ -49,7 +49,7 @@ download_category_order int(10) unsigned NOT NULL default '0',
 download_category_sef varchar(255) NOT NULL default '',
 PRIMARY KEY (download_category_id),
 FULLTEXT KEY download_category_name (download_category_name),
-FULLTEXT KEY download_category_description (download_category_description),
+FULLTEXT KEY download_category_description (download_category_description) 
 ) ENGINE=InnoDB;
 # --------------------------------------------------------
 
