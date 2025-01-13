@@ -1204,8 +1204,9 @@ $columnInfo = array(
 				e107::getConfig('core')->removePref('download_security_expression');
 				e107::getConfig('core')->removePref('download_security_link_expiry');
 			}
-			
-			e107::getConfig('core')->setPref($temp)->save(false);
+
+			e107::getPlugConfig('download')->setPref($temp)->save(false, true, false);
+			//e107::getxConfig('core')->setPref($temp)->save(false);
 
 		}
 
