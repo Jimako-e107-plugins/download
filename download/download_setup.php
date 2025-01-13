@@ -122,6 +122,9 @@ class download_setup
 			$old_prefs['recent_download_days'] = $pref['recent_download_days'];
 			$coreConfig->remove('recent_download_days');
 
+			$old_prefs['download_limits'] = $pref['download_limits'];
+			$coreConfig->remove('download_limits');
+
 			$dconf->setPref($old_prefs)->save(false, true);
 			$coreConfig->save(false, true);
 		}

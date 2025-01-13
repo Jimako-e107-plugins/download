@@ -24,11 +24,11 @@ if (!getperms("P") || !e107::isInstalled('download'))
 	exit() ;
 }
 
+e107::lan('download', 'global', true);
+e107::lan('download', 'admin', true);
+e107::lan('download', 'front', true);
 
-e107::lan('download','download'); // e_PLUGIN.'download/languages/'.e_LANGUAGE.'/download.php'
-e107::lan('download', 'admin', true); // e_PLUGIN.'download/languages/'.e_LANGUAGE.'/admin_download.php'
-
-
+ 
 
 // require_once(e_PLUGIN.'download/handlers/adminDownload_class.php');
 require_once(e_PLUGIN.'download/handlers/download_class.php');
@@ -203,7 +203,9 @@ if (isset($_POST['updatelimits']))
 		if ($pluginPref['download_limits'] != $tmp)
 		{
 			$pluginPref['download_limits'] = $tmp;
-			e107::getConfig()->set('download_limits', $tmp)->save(false);
+			 
+			e107::getPlugConfig('download', '', false)->setPref($pluginPref)->save(false, true);
+			//e107::getxConfig()->set('download_limits', $tmp)->save(false);
 			$message .= DOWLAN_126."<br/>";
 		}
 	}

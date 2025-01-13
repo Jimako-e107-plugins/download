@@ -25,5 +25,6 @@
 		<pref name="download_security_mode"></pref>
 		<pref name="download_security_expression"></pref>	
 		<pref name="download_security_link_expiry"></pref>	
+		<pref name="download_limits"></pref>	  
 	</pluginPrefs>
 </e107Plugin>

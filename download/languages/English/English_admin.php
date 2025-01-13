@@ -127,12 +127,12 @@ define("DOWLAN_112", "Limits");
 define("DOWLAN_113", "Userclass"); //FIXME Use Generic
 define("DOWLAN_114", "Add New Limit");
 define("DOWLAN_115", "Update limits");
-// define("DOWLAN_116", "Limit for that userclass already exists");
-// define("DOWLAN_117", "Limit successfully added");
-// define("DOWLAN_118", "Limit not added - unknown error");
-// define("DOWLAN_119", "Limit successfully removed");
-// define("DOWLAN_120", "Limit not removed - unknown error");
-// define("DOWLAN_121", "Limit successfully updated");
+define("DOWLAN_116", "Limit for that userclass already exists");
+define("DOWLAN_117", "Limit successfully added");
+define("DOWLAN_118", "Limit not added - unknown error");
+define("DOWLAN_119", "Limit successfully removed");
+define("DOWLAN_120", "Limit not removed - unknown error");
+define("DOWLAN_121", "Limit successfully updated");
 define("DOWLAN_122", "Inactive");
 define("DOWLAN_123", "Active - File is subject to download limits");
 define("DOWLAN_124", "Active - File is NOT subject to download limits");
