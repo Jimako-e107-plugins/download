@@ -164,7 +164,7 @@ if (isset($_POST['updateuploadoptions']))
 }
 
 $targetFields = array('gen_datestamp', 'gen_user_id', 'gen_ip', 'gen_intdata', 'gen_chardata');		// Fields for download limits
-
+ 
 if (!empty($_POST['addlimit']))
 {
 	if ($sql->select('generic','gen_id',"gen_type = 'download_limit' AND gen_datestamp = ".intval($_POST['newlimit_class'])))

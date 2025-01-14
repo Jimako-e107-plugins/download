@@ -4,11 +4,12 @@
 
 if (!defined('e107_INIT'))
 {
-    exit;
+	exit;
 } 
 
+
  		
-class download_ui extends e_admin_ui
+class download_overview_ui extends e_admin_ui
 {		
 		protected $pluginTitle		= 'Downloads+';
 		protected $pluginName		= 'download';
@@ -319,7 +320,7 @@ class download_ui extends e_admin_ui
 				
 
 
-class download_form_ui extends e_admin_form_ui
+class download_overview_form_ui extends e_admin_form_ui
 {
 
 	

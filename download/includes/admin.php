@@ -52,9 +52,9 @@ class plugin_download_admin extends e_admin_dispatcher
 		),
 
 		'admin_download'	=> array(
-			'controller' 	=> 'download_ui',
+			'controller' 	=> 'download_overview_ui',
 			'path' 			=> 'admin/admin_download.php',
-			'ui' 			=> 'download_form_ui',
+			'ui' 			=> 'download_overview_form_ui',
 			'uipath' 		=> 'admin/admin_download.php',
 		),
 

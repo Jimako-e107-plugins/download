@@ -66,6 +66,20 @@ class download_shortcodes extends e_shortcode
 		return $agreeText;
 	}
 
+	private function getDenialTextAsHtmlAttributeJsonString()
+	{
+	//	if (!isset($this->pref['download_denied']) || !$this->pref['agree_flag']) return null;
+
+		$rawAgreeText = isset($this->pref['download_denied']) ? $this->pref['download_denied'] : "";
+		$tp = e107::getParser();
+		$agreeText = $tp->toJSON($tp->toText($rawAgreeText), true);
+
+		if (!$agreeText) return null;
+
+		return $agreeText;
+	}
+
+
 	/**
 	 * Wrap the formatted download agreement text into an HTML JavaScript event that calls `confirm()`
 	 *
@@ -77,6 +91,19 @@ class download_shortcodes extends e_shortcode
 
 		return empty($maybeJson) ? "" : "return confirm($maybeJson);";
 	}
+
+	/**
+	 * Wrap the formatted denial text into an HTML JavaScript event that calls `confirm()`
+	 *
+	 * @return string
+	 */
+	private function getDenialTextAsHtmlEventAttribute()
+	{
+		$maybeJson = $this->getDenialTextAsHtmlAttributeJsonString();
+
+		return empty($maybeJson) ? "" : "return confirm($maybeJson);";
+	}
+
 
 	public function breadcrumb()
 	{
@@ -556,14 +583,28 @@ class download_shortcodes extends e_shortcode
 			//	$img = '<i class="icon-download"></i>';
 		}
 
-		return "<a" . $tp->toAttributes([
+		//check_class($row['download_category_class']) not available
+		if (check_class($this->var['download_class']))
+		{
+			return "<a" . $tp->toAttributes([
 				"class"   => "e-tip",
 				"title"   => defined("LAN_DOWNLOAD") ? LAN_DOWNLOAD : null,
 				"href"    => $this->var['download_mirror_type'] ?
-					e_PLUGIN_ABS . "download/download.php?mirror." . $this->var['download_id'] :
-					$tp->parseTemplate("{DOWNLOAD_REQUEST_URL}", true, $this),
+				e_PLUGIN_ABS . "download/download.php?mirror." . $this->var['download_id'] :
+				$tp->parseTemplate("{DOWNLOAD_REQUEST_URL}", true, $this),
 				"onclick" => $this->getAgreeTextAsHtmlEventAttribute(),
 			]) . ">$img</a>";
+		}
+		else {
+			return "<a" . $tp->toAttributes([
+				"class"   => "e-tip disabled",
+				"title"   => defined("LAN_DOWNLOAD") ? LAN_DOWNLOAD : null,
+				"href"    =>  "#",
+				"onclick" => $this->getDenialTextAsHtmlEventAttribute(),
+			]) . ">$img</a>";
+		}
+
+
 	}
 
 
@@ -718,18 +759,36 @@ class download_shortcodes extends e_shortcode
 		return $this->var['download_name'];
 	}
 
+	/* {DOWNLOAD_VIEW_NAME_LINKED} */
 	function sc_download_view_name_linked()
 	{
 
 		$tp = e107::getParser();
 
-		$url = $tp->parseTemplate("{DOWNLOAD_REQUEST_URL}", true, $this);  //$this->sc_download_request_url();
+		$url = $this->var['download_mirror_type'] ?
+			e_PLUGIN_ABS . "download/download.php?mirror." . $this->var['download_id'] :
+			$tp->parseTemplate("{DOWNLOAD_REQUEST_URL}", true, $this);
 
-		return "<a" . $tp->toAttributes([
+		//check_class($row['download_category_class']) not available yet
+		if (check_class($this->var['download_class']))
+		{
+			return "<a" . $tp->toAttributes([
+				"class"   => "e-tip",
+				"title"   => defined('LAN_dl_46') ? LAN_dl_46 : null,
 				"href"    => $url,
 				"onclick" => $this->getAgreeTextAsHtmlEventAttribute(),
-				"title"   => defined('LAN_dl_46') ? LAN_dl_46 : null,
 			]) . ">{$this->var['download_name']}</a>";
+		}
+		else
+		{
+			return "<a" . $tp->toAttributes([
+				"class"   => "e-tip",
+				"title"   => defined('LAN_dl_46') ? LAN_dl_46 : null,
+				"href"    =>  "#",
+				"onclick" => $this->getDenialTextAsHtmlEventAttribute(),
+			]) . ">{$this->var['download_name']}</a>";
+		}
+ 
 	}
 
 	function sc_download_view_author()

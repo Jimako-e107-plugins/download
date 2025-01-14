@@ -75,56 +75,7 @@ class download_url // plugin-folder + '_url'
 
 		
 		/* frontpage 'maincats'  */
-		$config['index'] = array(
-			'alias'         => $alias,
-			'regex'		    => '^{alias}/$',
-			'sef'		    => '{alias}/',
-			'redirect'	    => '{e_PLUGIN}download/download.php',
-		);
-
- 
-
-		return $config;
-	}
-
-
-	private function profile1()
-	{
-		$config = array();
- 
-
-		$config['category'] = array(
-			'regex'			=> '^{alias}/category/([\d]*)/(.*)$',
-			'redirect'		=> '{e_PLUGIN}download/download.php?action=list&id=$1',
-			'sef'           => '{alias}/category/{download_category_id}/{download_category_sef}/',
-		);
-
-		$config['item']     = array(
-			'regex'		    => '^{alias}/([\d]*)/(.*)$',
-			'redirect'	    => '{e_PLUGIN}download/download.php?action=view&id=$1',
-			'sef'           => '{alias}/{download_id}/{download_sef}',
-		);
-
-		$config['get']     = array(
-			'regex'		    => '^{alias}/get/([\d]*)/(.*)$',
-			'sef'           => '{alias}/get/{download_id}/{download_sef}',
-			'redirect'	    => '{e_PLUGIN}download/request.php?id=$1&sef=$2', 		// file-path of what to load when the regex returns true.
-		);
-
-		$config['report']    = array(
-			'regex'		    => '^{alias}/report/([\d]*)/(.*)$',
-			'sef'           => '{alias}/report/{download_id}/{download_sef}',
-			'redirect'	    => '{e_PLUGIN}download/download.php?action=report&id=$1', 		// file-path of what to load when the regex returns true.
-
-		);
-
-		$config['image']     = array(
-			'regex'		    => '^{alias}/image/([\d]*)/(.*)$',
-			'sef'           => '{alias}/image/{download_id}/{download_sef}',
-			'redirect'	    => '{e_PLUGIN}download/request.php?download.$1', 		// file-path of what to load when the regex returns true.
-		);
-
-		$config['index'] = array(
+ 		$config['index'] = array(
 			'regex'		    => '^{alias}/?(.*)$',
 			'sef'		    => '{alias}/',
 			'redirect'	    => '{e_PLUGIN}download/download.php$1',
@@ -133,7 +84,5 @@ class download_url // plugin-folder + '_url'
 
 		return $config;
 	}
-
-
-
+ 
 }
