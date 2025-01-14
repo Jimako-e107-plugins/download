@@ -273,7 +273,7 @@ class download_request
 					{
 						//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=1";
 						$goUrl = e107::url('download', 'index', null, array('query' => array('action' => 'error', 'id' => 1)));
-						echo "276"; //e107::redirect($goUrl);
+						e107::redirect($goUrl);
 						return;
 					}
 					else
