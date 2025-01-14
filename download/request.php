@@ -6,6 +6,8 @@ if (!defined('e107_INIT'))
 
 e107::lan('download','download');
 
+
+
 class download_request
 {
 
@@ -18,6 +20,7 @@ class download_request
 		$sql = e107::getDb();
 		$tp = e107::getParser();
 		$pluginPref = e107::pref('download');
+ 
         //id=4
 		if(!is_numeric(e_QUERY) && empty($_GET['id']))
 		{
@@ -270,7 +273,7 @@ class download_request
 					{
 						//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=1";
 						$goUrl = e107::url('download', 'index', null, array('query' => array('action' => 'error', 'id' => 1)));
-						e107::redirect($goUrl);
+						echo "276"; //e107::redirect($goUrl);
 						return;
 					}
 					else
@@ -389,32 +392,56 @@ class download_request
 		$sql = e107::getDb();
 		$pluginPref = e107::pref('download');
 
-		// Check download count limits
-		$qry = "SELECT gen_intdata, gen_chardata, (gen_intdata/gen_chardata) as count_perday FROM #generic WHERE gen_type = 'download_limit' AND gen_datestamp IN (".USERCLASS_LIST.") AND (gen_chardata >= 0 AND gen_intdata >= 0) ORDER BY count_perday DESC";
-		if($sql->gen($qry))
+		// Convert USERCLASS_LIST into an array
+		$userClassArray = explode(",", USERCLASS_LIST);
+
+		$limits = e107::unserialize($pluginPref['download_limit']);
+		$limits_count = $limits;
+		$limits_bw = $limits;
+
+		// Step 1: Sort the array by `limit_count_perday` in descending order
+		usort($limits_count, function ($a, $b)
 		{
-			$limits = $sql->fetch();
-			$cutoff = time() - (86400 * $limits['gen_chardata']);
-			if(USER)
+			return $b['limit_count_perday'] <=> $a['limit_count_perday'];
+		});
+
+
+
+		// Step 2: Find the first item where `limit_classnum` is in `USERCLASS_LIST`
+		$maxLimit = null;
+
+		foreach ($limits_count as $item)
+		{
+			if (in_array($item['limit_classnum'], $userClassArray))
 			{
-				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_userid = ".USERID;
+				$maxLimit = $item;
+				break; // Stop after finding the first match
+			}
+		}
+ 
+		if($maxLimit) {
+			$cutoff = time() - (86400 * $maxLimit['limit_count_days']);
+			if (USER)
+			{
+				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_userid = " . USERID;
 			}
 			else
 			{
 				$ip = e107::getIPHandler()->getIP();
 				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_ip = '{$ip}'";
 			}
+
 			$qry = "SELECT COUNT(d.download_id) as count FROM #download_requests as dr LEFT JOIN #download as d ON dr.download_request_download_id = d.download_id AND d.download_active = 1 WHERE {$where} GROUP by dr.download_request_userid";
-			if($sql->gen($qry))
+			if ($sql->gen($qry))
 			{
 				$row = $sql->fetch();
-				if($row['count'] >= $limits['gen_intdata'])
+				if ($row['count'] >= $maxLimit['limit_count_num'])
 				{
 					// Exceeded download count limit
-				//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=2";
-					$goUrl = e107::url('download', 'index', null, array('query'=>array('action'=>'error','id'=>2)));
+					//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=2";
+					$goUrl = e107::url('download', 'index', null, array('query' => array('action' => 'error', 'id' => 2)));
 					e107::redirect($goUrl);
-				 // 	e107::redirect(e_BASE."download.php?error.{$cutoff}.2");
+					// 	e107::redirect(e_BASE."download.php?error.{$cutoff}.2");
 					/* require_once(HEADERF);
 					$ns->tablerender(LAN_ERROR, LAN_dl_62);
 					require(FOOTERF);  */
@@ -422,39 +449,55 @@ class download_request
 				}
 			}
 		}
-		// Check download bandwidth limits
-		$qry = "SELECT gen_user_id, gen_ip, (gen_user_id/gen_ip) as bw_perday FROM #generic WHERE gen_type='download_limit' AND gen_datestamp IN (".USERCLASS_LIST.") AND (gen_user_id >= 0 AND gen_ip >= 0) ORDER BY bw_perday DESC";
-		if($sql->gen($qry))
+
+		usort($limits_bw, function ($a, $b)
 		{
-			$limit = $sql->fetch();
-			$cutoff = time() - (86400*$limit['gen_ip']);
-			if(USER)
+			return $b['limit_bw_perday'] <=> $a['limit_bw_perday'];
+		});
+		// Step 2: Find the first item where `limit_classnum` is in `USERCLASS_LIST`
+		$maxLimit = null;
+
+		foreach ($limits_bw as $item)
+		{
+			if (in_array($item['limit_classnum'], $userClassArray))
 			{
-				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_userid = ".USERID;
+				$maxLimit = $item;
+				break; // Stop after finding the first match
+			}
+		}
+		if ($maxLimit)
+		{
+			$cutoff = time() - (86400 * $maxLimit['limit_bw_days']);
+			if (USER)
+			{
+				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_userid = " . USERID;
 			}
 			else
 			{
 				$ip = e107::getIPHandler()->getIP();
 				$where = "dr.download_request_datestamp > {$cutoff} AND dr.download_request_ip = '{$ip}'";
 			}
+
 			$qry = "SELECT SUM(d.download_filesize) as total_bw FROM #download_requests as dr LEFT JOIN #download as d ON dr.download_request_download_id = d.download_id AND d.download_active = 1 WHERE {$where} GROUP by dr.download_request_userid";
-			if($sql->gen($qry))
+			if ($sql->gen($qry))
 			{
 				$row = $sql->fetch();
 
-				if($row['total_bw'] / 1024 > $limit['gen_user_id'])
+				if ($row['total_bw'] / 1024 > $limit['gen_user_id'])
 				{	//Exceed bandwith limit
-				//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=2";
-					$goUrl = e107::url('download', 'index', null, array('query'=>array('action'=>'error','id'=>2)));
-					 e107::redirect($goUrl);
-				 // e107::redirect(e_BASE."download.php?error.{$cutoff}.2");
+					//	$goUrl = e107::getUrl()->create('download/index')."?action=error&id=2";
+					$goUrl = e107::url('download', 'index', null, array('query' => array('action' => 'error', 'id' => 2)));
+					e107::redirect($goUrl);
+					// e107::redirect(e_BASE."download.php?error.{$cutoff}.2");
 					/* require(HEADERF);
 					$ns->tablerender(LAN_ERROR, LAN_dl_62);
 					require(FOOTERF); */
 					exit();
 				}
 			}
+
 		}
+ 
 	}
 
 	private static function decorate_download_location($url)
